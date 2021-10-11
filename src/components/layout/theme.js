@@ -3,6 +3,11 @@ import { indigo, lightBlue, red } from "@mui/material/colors";
 const white = "#FFF";
 const black = "#000";
 
+/**
+ * Create Theme for the Application
+ * 
+ * All project level css details like Primary color, theme color needs to be defined here
+ */
 export default createTheme({
     palette: {
         type: "dark",

@@ -1,0 +1,38 @@
+.slick-arrow {
+    position: absolute;
+    top: 0;
+    margin-top: 12.5%;
+    width: 4rem;
+    height: 4rem;
+    transform: translateY(-50%);
+    border-radius: 50%;
+    font-size: 0;
+    outline: 0;
+    background: gray;
+    z-index: 999;
+}
+
+.weather_container .slick-disabled {
+    display: none!important;
+}
+
+.slick-prev:hover,
+.slick-prev:focus,
+.slick-next:hover,
+.slick-next:focus {
+    background: indigo;
+}
+
+.cardMargin {
+    margin: 4%!important;
+}
+
+.card-selected {
+    border-bottom: groove;
+}
+
+@media only screen and (max-width: 600px) {
+    .slick-arrow {
+        margin-top: 40.5%;
+    }
+}

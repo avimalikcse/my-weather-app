@@ -1,176 +1,77 @@
-import {
-  Container,
-  Grid,
-  Card,
-  CardContent,
-  CardMedia,
-  Typography,
-} from "@mui/material";
-import cx from "classnames";
-import React from "react";
+import { Container, FormControlLabel, Radio, RadioGroup } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import WithLoading from "../../components/hoc/loaderHOC";
 import SliderWrapper from "../../components/shared/sliderWrapper";
-import styles from "./weatherCard.module.css";
+import Graph from "../../components/shared/graph";
+import WeatherCard from "./WeatherCard";
+import { useWeatherHook } from "./hooks";
+import { getInitialSlide, makeWeatherGraphData } from "../../utils/helper";
 
-import suncon from "../../images/suncon.png";
-import cloudcon from "../../images/cloudycon.png";
-import lightraincon from "../../images/lightraincon.png";
-import lightningcon from "../../images/lightningcon.png";
-import heavyraincon from "../../images/heavyraincon.png";
-import smokecon from "../../images/smokecon.png";
+export default function WeatherContainer() {
+  const [tempUnit, setTempUnit] = useState("C");
 
-const weathericons = {
-  Clouds: cloudcon,
-  Clear: suncon,
-  Drizzle: lightraincon,
-  Rain: heavyraincon,
-  Thunderstorm: lightningcon,
-  Smoke: smokecon,
-};
+  const { dispatchGetWeatherData, dispatchChangeDate } = useWeatherHook();
 
-export default function WeatherContainer(props) {
-  return (
-    <Container>
-      <SliderWrapper>
-        <CardContent>
-        <Typography gutterBottom variant="h5" component="h2" align="center">
-            Today
-          </Typography>
-          <CardMedia
-            className={styles.image}
-            component="img"
-            alt="Sun"
-            image={suncon}
-          />
-          <Typography
-            variant="body2"
-            color="textSecondary"
-            align="center"
-            component="p"
-          >
-            23
-          </Typography>
-          <Typography variant="body2" color="textSecondary" align="center">
-            09 -Oct
-          </Typography>
-          <Typography variant="body2" color="textSecondary" align="center">
-           Clear
-          </Typography>
-        </CardContent>
+  // get data from redux store
+  const {
+    city,
+    loading,
+    isErrorOut,
+    error,
+    weatherData,
+    activeDate,
+  } = useSelector((state) => state.weather);
 
+  useEffect(() => {
+    dispatchGetWeatherData(city); // dispatch action to load Weather data from API
+  }, [dispatchGetWeatherData, city]);
 
-        <CardContent>
-        <Typography gutterBottom variant="h5" component="h2" align="center">
-            Tomorrow 
-          </Typography>
-          <CardMedia
-            className={styles.image}
-            component="img"
-            alt="Sun"
-            image={suncon}
-          />
-          <Typography
-            variant="body2"
-            color="textSecondary"
-            align="center"
-            component="p"
-          >
-            23
-          </Typography>
-          <Typography variant="body2" color="textSecondary" align="center">
-            09 -Oct
-          </Typography>
-          <Typography variant="body2" color="textSecondary" align="center">
-           Clear
-          </Typography>
-        </CardContent>
+  useEffect(() => {
+    if (isErrorOut) throw error;
+  }, [isErrorOut, error]);
 
-
-        <CardContent>
-        <Typography gutterBottom variant="h5" component="h2" align="center">
-            Wednesday  
-          </Typography>
-          <CardMedia
-            className={styles.image}
-            component="img"
-            alt="Sun"
-            image={suncon}
-          />
-          <Typography
-            variant="body2"
-            color="textSecondary"
-            align="center"
-            component="p"
-          >
-            23
-          </Typography>
-          <Typography variant="body2" color="textSecondary" align="center">
-            09 -Oct
-          </Typography>
-          <Typography variant="body2" color="textSecondary" align="center">
-           Clear
-          </Typography>
-        </CardContent>
-
-
-        <CardContent>
-        <Typography gutterBottom variant="h5" component="h2" align="center">
-            Wednesday  
-          </Typography>
-          <CardMedia
-            className={styles.image}
-            component="img"
-            alt="Sun"
-            image={suncon}
-          />
-          <Typography
-            variant="body2"
-            color="textSecondary"
-            align="center"
-            component="p"
-          >
-            23
-          </Typography>
-          <Typography variant="body2" color="textSecondary" align="center">
-            09 -Oct
-          </Typography>
-          <Typography variant="body2" color="textSecondary" align="center">
-           Clear
-          </Typography>
-        </CardContent>
-
-
-        <CardContent>
-        <Typography gutterBottom variant="h5" component="h2" align="center">
-            Wednesday  
-          </Typography>
-          <CardMedia
-            className={styles.image}
-            component="img"
-            alt="Sun"
-            image={suncon}
-          />
-          <Typography
-            variant="body2"
-            color="textSecondary"
-            align="center"
-            component="p"
-          >
-            23
-          </Typography>
-          <Typography variant="body2" color="textSecondary" align="center">
-            09 -Oct
-          </Typography>
-          <Typography variant="body2" color="textSecondary" align="center">
-           Clear
-          </Typography>
-        </CardContent>
-
-
+  const mainContent = () => {
+    return (
+      <Container className="weather_container">
+        <RadioGroup
+          row
+          aria-label="Unit"
+          onChange={(e) => setTempUnit(e.target.value)}
+          value={tempUnit}
+          name="row-radio-buttons-group"
+        >
+          <FormControlLabel value="C" control={<Radio />} label="°C" />
+          <FormControlLabel value="F" control={<Radio />} label="°F" />
+        </RadioGroup>
+        <SliderWrapper
+          title={`Weather for next 5 days in ${city}`}
+          initialSlide={getInitialSlide(activeDate, weatherData)}
+        >
+          {/* loop into the dates  */}
+          {Object.keys(weatherData).map((date) => (
+            <WeatherCard
+              key={date}
+              weatherData={weatherData[date]}
+              date={date}
+              onDateChange={dispatchChangeDate}
+              activeDate={activeDate}
+              tempUnit={tempUnit}
+            ></WeatherCard>
+          ))}
+        </SliderWrapper>
         
+        {/* Graph Component  */}
+        <Graph
+          graphData={makeWeatherGraphData(
+            weatherData[activeDate].sessions,
+            tempUnit
+          )}
+        />
+      </Container>
+    );
+  };
 
-
-        
-      </SliderWrapper>
-    </Container>
-  );
+  const WithLoader = WithLoading(mainContent);
+  return <WithLoader isLoading={loading}></WithLoader>;
 }

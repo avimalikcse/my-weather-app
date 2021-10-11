@@ -6,6 +6,11 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 
+
+/**
+ * Main Layout of the APP
+ *  
+ */
 const MainLayout = ({ children }) => {
   return (
     <Box sx={{ flexGrow: 1 }}>

@@ -1,46 +1,38 @@
 import { Container } from "@mui/material";
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import Slider from "react-slick";
-import "slick-carousel/slick/slick.css"; 
+import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import "./slider.css";
 
-function NextArrow(props) {
-  const { className, onClick } = props;
+/**
+ * A slider component to display slide carousel 
+ * 
+ * @param {*} props 
+ */
 
-  return (
-    <div
-      className={className}
-      onClick={onClick}
-    />
-  );
-}
 
-function PrevArrow(props) {
-  const { className, onClick } = props;
-  return (
-    <div
-      className={className}
-      onClick={onClick}
-    />
-  );
-}
-
-export default function SliderWrapper(props) {
-  const { title, children } = props;
+ function SliderCore({ title, children,initialSlide }) {
   const slidesToShow = useMemo(
     () => (window.matchMedia("(max-width: 750px)").matches ? 1 : 3),
     []
-  );
-  const settings = { 
+  ); // if its Mobile, display 1 Slide, else 3
+  
+  // config of slider
+  const settings = {
     slidesToShow: slidesToShow,
     infinite: false,
     slidesToScroll: 1,
+    initialSlide:initialSlide
   };
+
 
   return (
     <Container>
-      <h2>{title || 'Slides'}</h2>
+      <h2>{title || "Slides"}</h2>
       <Slider {...settings}>{children}</Slider>
     </Container>
   );
 }
+const  SliderWrapper = React.memo(SliderCore);
+export default SliderWrapper
