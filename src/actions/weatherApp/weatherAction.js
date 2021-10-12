@@ -1,4 +1,3 @@
-import callAPI from "../../utils/apiManager";
 import apiManager from "../../utils/apiManager";
 import { OPEN_WEATHER_API_KEY } from "../../utils/consts";
 import { prepareWeatherData } from "../../utils/helper";
